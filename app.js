@@ -1,22 +1,23 @@
-const computerChoiceDisplay = document.getElementById('computer-choice')
-const userChoiceDisplay = document.getElementById('user-choice')
 const resultDisplay = document.getElementById('result')
-const possibleChoices = document.querySelectorAll('button')
+const possibleChoices = document.querySelectorAll('div.choices > div.choice')
 const choices = ['rock', 'paper', 'scissors']
+const userScoreDisplay = document.getElementById('user-score')
+const computerScoreDisplay = document.getElementById('computer-score')
+const modal = document.querySelector('.modal')
+const restart = document.getElementById('restart')
 let userChoice
 let computerChoice
+let userScore = 0
+let computerScore = 0
 
-possibleChoices.forEach(possibleChoice => possibleChoice.addEventListener('click', (e) => {
-    userChoice = e.target.id
-    userChoiceDisplay.innerHTML = userChoice
+possibleChoices.forEach(possibleChoice => possibleChoice.addEventListener('click', () => {
+    userChoice = possibleChoice.id
     generateComputerChoice()
     getresult()
 }))
 
 function generateComputerChoice() {
-    const randomChoice = choices[Math.floor(Math.random() * choices.length)]
-    computerChoice = randomChoice
-    computerChoiceDisplay.innerHTML = computerChoice
+    computerChoice = choices[Math.floor(Math.random() * choices.length)]
 }
 
 function getresult() {
@@ -24,17 +25,40 @@ function getresult() {
         case 'paperrock':
         case 'scissorspaper':
         case 'rockscissors':
-            resultDisplay.innerHTML = 'you win!'
+            resultDisplay.innerHTML = `<span class="close"></span> <h1 class="text-win">You win!</h1> <p>Computer choose <strong>${computerChoice}</strong></p>`;
+            userScore++
+            userScoreDisplay.innerHTML = userScore.toString()
+            modal.style.display = 'block';
             break
         case 'scissorsrock':
         case 'rockpaper':
         case 'paperscissors':
-            resultDisplay.innerHTML = 'you lose!'
+            resultDisplay.innerHTML = `<span class="close"></span> <h1 class="text-lose">You lost</h1> <p>Computer choose <strong>${computerChoice}</strong></p>`;
+            computerScore++
+            computerScoreDisplay.innerHTML = computerScore.toString()
+            modal.style.display = 'block';
             break
         case 'paperpaper':
         case 'scissorsscissors':
         case 'rockrock':
-            resultDisplay.innerHTML = 'it\'s a draw!'
+            resultDisplay.innerHTML = `<span class="close"></span> <h1>It's a draw</h1> <p>You both choose <strong>${computerChoice}</strong></p>`;
+            modal.style.display = 'block';
             break
     }
 }
+
+function closeModal(e) {
+    if (e.target === modal) {
+        modal.style.display = "none"
+    }
+}
+
+function restartGame() {
+    userScore = 0
+    computerScore = 0
+    userScoreDisplay.innerHTML = userScore.toString()
+    computerScoreDisplay.innerHTML = computerScore.toString()
+}
+
+window.addEventListener('click', closeModal)
+restart.addEventListener('click', restartGame)
